@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Doctor Dashboard</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Custom CSS -->
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: #ffffff !important;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        .panel {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel-heading {
+            background-color: #282828;
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+            margin: 0 auto;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            border-top: 1px solid #444;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .btn-navigation {
+            background-color: #2979ff; /* Primary blue color */
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 5px;
+            font-size: 1.3rem; /* Match the size of Request Connection button */
+            font-weight: 600; /* Semi-bold for better visibility */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+        }
+
+        .btn-navigation:hover {
+            background-color: #1e60cc; /* Slightly darker shade on hover */
+            transform: scale(1.05); /* Slight enlarge effect */
+        }
+
+        .btn-navigation:active {
+            transform: scale(0.95); /* Slightly smaller when clicked */
+        }
+
+        .btn-navigation + .btn-navigation {
+            margin-left: 20px; /* Spacing between buttons */
+        }
+
+        .form-control {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1.3rem;
+            font-weight: 500; /* Slightly bolder font */
+            font-family: 'Poppins', sans-serif; /* Consistent font */
+            appearance: none; /* Remove default dropdown styling */
+            box-shadow: none;
+        }
+
+        .form-control:hover,
+        .form-control:focus {
+            background-color: #282828;
+            border-color: #2979ff;
+            box-shadow: 0px 0px 5px #2979ff;
+        }
+
+        .form-control option {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.3rem;
+            padding: 10px;
+        }
+
+        .form-control option:hover {
+            background-color: #2a2a2a;
+            color: #ffd700;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Doctor Dashboard</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a id="logoutButton" href="#">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Personal Information -->
+        <div class="panel">
+            <div class="panel-heading">Personal Information</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <th>Name:</th>
+                        <td id="name"></td>
+                    </tr>
+                    <tr>
+                        <th>Age:</th>
+                        <td id="age"></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Access Requests -->
+        <div class="panel">
+            <div class="panel-heading">Access Requests</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Public Key</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accessRequestsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Accessible EHRs -->
+        <div class="panel">
+            <div class="panel-heading">Accessible EHRs</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Patient</th>
+                            <th>Public Key</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="connectedPatientsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Medical Records -->
+        <div class="panel" id="patientRecordsPanel" style="display: none;">
+            <div class="panel-heading">
+                Patient Medical Records
+                <button onclick="closeRecordsPanel()" class="btn btn-danger btn-sm pull-right">Close</button>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="recordDropdown">Select Diagnosis:</label>
+                    <select class="form-control" id="recordDropdown" onchange="loadSelectedRecord()" required style="padding-top: 5px; padding-bottom: 5px; line-height: 1.8;">
+                        <option value="" selected disabled>--Select Diagnosis--</option>
+                    </select>
+                </div>
+                <div id="selectedRecordContainer">
+                    <!-- Record details will be dynamically inserted here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Additional Functions -->
+        <div class="panel">
+            <div class="panel-heading">Additional Functions</div>
+            <div class="panel-body text-center">
+                <a href="doctor_medical_records.html" class="btn-navigation">Medical Records</a>
+                <a href="doctor_logs.html" class="btn-navigation">View Logs</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+    async function initializePage() {
+        try {
+            console.log("Validating session...");
+            await validateLogin(); // Ensure session exists before initializing Web3
+
+            console.log("Initializing MetaMask and smart contract...");
+            await initializeWeb3(); // Only initialize Web3 if session is valid
+            
+            console.log("Validating role as doctor...");
+            await validateRole("doctor"); // Ensure the user has the "doctor" role
+
+            // Log the doctor's login (only if not already logged in this session)
+            const hasLoggedIn = localStorage.getItem("doctorLoggedIn");
+            if (!hasLoggedIn) {
+                await logDoctorLogin(); // Gas payment made here
+                localStorage.setItem("doctorLoggedIn", "true"); // Mark as logged
+                console.log("Doctor login logged and marked for session.");
+            } else {
+                console.log("Doctor login already logged in this session.");
+            }
+
+            console.log("Loading doctor dashboard...");
+            await loadDoctorDetails();
+            await loadAccessRequests();
+            await loadConnectedPatients();
+            attachLogout();
+        } catch (error) {
+            console.error("Error initializing doctor dashboard:", error.message);
+            alert("Unauthorized access. Redirecting to login page...");
+            location.href = "./index.html";
+        }
+    }
+
+        // Log the doctor's login (requires gas payment)
+        async function logDoctorLogin() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const doctorAddress = accounts[0];
+
+                // Call the `log_doctor_login` method to log the login
+                await contractInstance.methods.log_doctor_login().send({ from: doctorAddress });
+                console.log("Doctor login logged successfully.");
+            } catch (error) {
+                console.error("Error logging doctor login:", error);
+                alert("Failed to log doctor login. Please try again.");
+                throw error; // Prevent further access if logging fails
+            }
+        }
+    
+        async function loadDoctorDetails() {
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+            const doctor = await contractInstance.methods.get_doctor(publicKey).call();
+            document.getElementById("name").textContent = doctor[0] || "N/A";
+            document.getElementById("age").textContent = doctor[1] || "N/A";
+        }
+    
+        async function loadAccessRequests() {
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+            const accessRequests = await contractInstance.methods.get_access_requests(publicKey).call();
+            const table = document.getElementById("accessRequestsTable");
+            if (accessRequests.length) {
+                table.innerHTML = "";
+                for (const patient of accessRequests) {
+                    const patientName = await contractInstance.methods.getAgentName(patient).call();
+                    const row = `
+                        <tr>
+                            <td>${patientName || "Unknown"}</td>
+                            <td>${patient}</td>
+                            <td>
+                                <button class="btn btn-success" onclick="acceptRequest('${patient}')">Accept</button>
+                                <button class="btn btn-danger" onclick="rejectRequest('${patient}')">Reject</button>
+                            </td>
+                        </tr>
+                    `;
+                    table.innerHTML += row;
+                }
+            } else {
+                table.innerHTML = "<tr><td colspan='3'>No pending requests</td></tr>";
+            }
+        }
+    
+        async function loadConnectedPatients() {
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+            const connectedPatients = await contractInstance.methods.get_accessed_patientlist_for_doctor(publicKey).call();
+            const table = document.getElementById("connectedPatientsTable");
+            if (connectedPatients.length) {
+                table.innerHTML = "";
+                for (const patient of connectedPatients) {
+                    const patientName = await contractInstance.methods.getAgentName(patient).call();
+                    const row = `
+                        <tr>
+                            <td>${patientName || "Unknown"}</td>
+                            <td>${patient}</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="viewPatientRecords('${patient}')">View Records</button>
+                            </td>
+                        </tr>
+                    `;
+                    table.innerHTML += row;
+                }
+            } else {
+                table.innerHTML = "<tr><td colspan='3'>No connected patients</td></tr>";
+            }
+        }
+
+        async function loadSelectedRecord() {
+            const recordDropdown = document.getElementById("recordDropdown");
+            const recordContainer = document.getElementById("selectedRecordContainer");
+            const selectedIndex = recordDropdown.value;
+
+            if (selectedIndex === "") {
+                recordContainer.innerHTML = "<p>No record selected.</p>";
+                return;
+            }
+
+            try {
+                if (!currentPatient) {
+                    throw new Error("No patient selected.");
+                }
+
+                const records = await contractInstance.methods.getMedicalRecords(currentPatient).call();
+
+                const selectedDiagnosis = records[0][selectedIndex]; // Diagnosis title
+                const selectedDescription = records[1][selectedIndex]; // IPFS hash or description
+                const timestamp = new Date(Number(records[2][selectedIndex]) * 1000).toLocaleString(); // Explicitly convert BigInt to number
+
+                recordContainer.innerHTML = `
+
+                    <div class="form-group">
+                        <label for="descriptionBox"><strong>Description:</strong></label>
+                        <textarea id="descriptionBox" class="form-control" rows="4" style="background-color: #333" readonly>${selectedDescription}</textarea>
+                    </div>
+                    <p><strong>Timestamp:</strong> ${timestamp}</p>
+                `;
+            } catch (error) {
+                console.error("Error loading selected record:", error);
+                recordContainer.innerHTML = "<p>Error loading the selected record.</p>";
+            }
+        }
+
+        async function acceptRequest(patientAddress) {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const doctorAddress = accounts[0];
+                await contractInstance.methods.accept_access_request(patientAddress).send({ from: doctorAddress });
+                alert("Request accepted successfully!");
+                await loadAccessRequests();
+                await loadConnectedPatients();
+            } catch (error) {
+                console.error("Error accepting request:", error);
+                alert("Failed to accept the request.");
+            }
+        }
+    
+        async function rejectRequest(patientAddress) {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const doctorAddress = accounts[0];
+                await contractInstance.methods.reject_access_request(patientAddress).send({ from: doctorAddress });
+                alert("Request rejected successfully!");
+                await loadAccessRequests();
+            } catch (error) {
+                console.error("Error rejecting request:", error);
+                alert("Failed to reject the request.");
+            }
+        }
+    
+        let currentPatient = null; // Declare currentPatient at the global level
+
+        async function viewPatientRecords(patientAddress) {
+            try {
+                currentPatient = patientAddress; // Assign the current patient address
+
+                const records = await contractInstance.methods.getMedicalRecords(patientAddress).call();
+                const recordDropdown = document.getElementById("recordDropdown");
+                const recordContainer = document.getElementById("selectedRecordContainer");
+
+                recordDropdown.innerHTML = `<option value="" disabled selected>--Select Diagnosis--</option>`;
+                recordContainer.innerHTML = "";
+
+                if (records[0].length) {
+                    records[0].forEach((diagnosis, index) => {
+                        const option = document.createElement("option");
+                        option.value = index;
+                        option.textContent = diagnosis;
+                        recordDropdown.appendChild(option);
+                    });
+
+                    document.getElementById("patientRecordsPanel").style.display = "block";
+                } else {
+                    alert("No records available for this patient.");
+                }
+            } catch (error) {
+                console.error("Error loading patient records:", error);
+                alert("Failed to load patient records.");
+            }
+        }
+
+        function closeRecordsPanel() {
+            document.getElementById("patientRecordsPanel").style.display = "none";
+            currentPatient = null; // Reset currentPatient
+        }
+
+        initializePage();
+    </script>
+    
+</body>
+
+</html>

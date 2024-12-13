@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Admin Logs</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Custom CSS -->
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-size: 2rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .table {
+            width: 100%;
+            background-color: #1c1c1c;
+            color: #ffffff;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            border: 1px solid #333;
+            text-align: center; /* Ensure headers and data are centered */
+            vertical-align: middle;
+        }
+
+        .table th {
+            background-color: #282828;
+            color: #2979ff;
+            font-weight: 600;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            margin: 10px 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            margin: 10px 0;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+
+        .btn-navigation {
+            margin: 10px;
+            background-color: #2979ff;
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-navigation:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="administrator.html">Admin Dashboard</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="administrator.html">Dashboard</a></li>
+                <li><a href="administrator_view.html">View</a></li>
+                <li><a id="logoutButton" href="#" onclick="adminLogout()">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <h2 class="text-center">Admin Activity Logs</h2>
+        <div class="table-container">
+            <table class="table table-hover" id="logTable">
+                <thead>
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Event Type</th>
+                        <th>Description</th>
+                        <th>Timestamp</th>
+                        <th>Status/Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Logs will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Navigation Buttons -->
+    <div class="container text-center" style="margin-top: 20px;">
+        <a href="administrator.html" class="btn-navigation">Admin Dashboard</a>
+        <a href="administrator_view.html" class="btn-navigation">View Registered Users</a>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+
+    <script>
+        let web3;
+        let contractInstance;
+    
+        // Initialize Web3 and Contract
+        async function initializeWeb3() {
+            if (!window.ethereum) {
+                alert("Please install MetaMask to use this application.");
+                location.href = "./index.html";
+                return false;
+            }
+    
+            try {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+                return true;
+            } catch (error) {
+                console.error("Error initializing Web3:", error);
+                alert("Failed to connect to MetaMask.");
+                return false;
+            }
+        }
+    
+        // Validate Session
+        function validateSession() {
+            const sessionToken = localStorage.getItem("sessionToken");
+            const loggedInAddress = localStorage.getItem("loggedInAddress");
+            const userRole = localStorage.getItem("userRole");
+    
+            if (!sessionToken || !loggedInAddress || userRole !== "admin") {
+                alert("Access denied: You must log in through the login page.");
+                location.href = "./index.html";
+                return false;
+            }
+    
+            return true;
+        }
+    
+        // Load Admin Logs
+        async function loadAdminLogs() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const adminAddress = accounts[0];
+                const logTable = document.getElementById("logTable").getElementsByTagName("tbody")[0];
+                logTable.innerHTML = ""; // Clear existing logs
+    
+                const logs = [];
+    
+                // Fetch Admin Login logs
+                const loginLogs = await contractInstance.getPastEvents("AdminAuthenticated", {
+                    filter: { admin: adminAddress },
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+    
+                for (const log of loginLogs) {
+                    const timestamp = BigInt(log.returnValues.timestamp);
+                    logs.push({
+                        eventType: "Login",
+                        description: "Admin Logged In successfully.",
+                        timestamp: Number(timestamp) * 1000,
+                        action: "Logged In",
+                    });
+                }
+    
+                // Fetch Admin Logout logs
+                const logoutLogs = await contractInstance.getPastEvents("AdminLoggedOut", {
+                    filter: { admin: adminAddress },
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+    
+                for (const log of logoutLogs) {
+                    const timestamp = BigInt(log.returnValues.timestamp);
+                    logs.push({
+                        eventType: "Logout",
+                        description: "Admin logged out successfully.",
+                        timestamp: Number(timestamp) * 1000,
+                        action: "Logged Out",
+                    });
+                }
+    
+                // Fetch User Approval Logs
+                const approvalLogs = await contractInstance.getPastEvents("RegistrationApproved", {
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+
+                for (const log of approvalLogs) {
+                    const { user, designation, timestamp } = log.returnValues;
+
+                    // Fetch the user's name using the getAgentName method
+                    const userName = await contractInstance.methods.getAgentName(user).call();
+
+                    // Determine the role dynamically by checking which details exist for the user
+                    let role = "Unknown";
+                    try {
+                        const patientData = await contractInstance.methods.get_patient(user).call();
+                        if (patientData[0] !== "") role = "Patient";
+                    } catch (e) {
+                        // If fetching patient details fails, proceed to check for doctor
+                    }
+
+                    try {
+                        const doctorData = await contractInstance.methods.get_doctor(user).call();
+                        if (doctorData[0] !== "") role = "Doctor";
+                    } catch (e) {
+                        // If fetching doctor details fails, role remains as "Unknown"
+                    }
+
+                    try {
+                        const nurseData = await contractInstance.methods.get_nurse(user).call();
+                        if (nurseData[0] !== "") role = "Nurse";
+                    } catch (e) {
+                        // If fetching nurse details fails, role remains as "Unknown"
+                    }
+
+                    logs.push({
+                        eventType: "Approval",
+                        description: `Approved ${role} registration for ${userName} : (${user}).`,
+                        timestamp: Number(BigInt(timestamp)) * 1000,
+                        action: "Approved",
+                    });
+                }
+
+                // Fetch User Rejection Logs
+                const rejectionLogs = await contractInstance.getPastEvents("RegistrationRejected", {
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+
+                for (const log of rejectionLogs) {
+                    const { user, designation, timestamp } = log.returnValues;
+
+                    // Fetch the user's name using the getAgentName method
+                    const userName = await contractInstance.methods.getAgentName(user).call();
+
+                    // Determine the role dynamically by checking which details exist for the user
+                    let role = "Unknown";
+                    try {
+                        const patientData = await contractInstance.methods.get_patient(user).call();
+                        if (patientData[0] !== "") role = "Patient";
+                    } catch (e) {
+                        // If fetching patient details fails, proceed to check for doctor
+                    }
+
+                    try {
+                        const doctorData = await contractInstance.methods.get_doctor(user).call();
+                        if (doctorData[0] !== "") role = "Doctor";
+                    } catch (e) {
+                        // If fetching doctor details fails, role remains as "Unknown"
+                    }
+
+                    try {
+                        const nurseData = await contractInstance.methods.get_nurse(user).call();
+                        if (nurseData[0] !== "") role = "Nurse";
+                    } catch (e) {
+                        // If fetching nurse details fails, role remains as "Unknown"
+                    }
+
+                    logs.push({
+                        eventType: "Rejection",
+                        description: `Rejected ${role} registration for ${userName} : (${user}).`,
+                        timestamp: Number(BigInt(timestamp)) * 1000,
+                        action: "Rejected",
+                    });
+                }
+    
+                // Sort logs by timestamp (descending)
+                logs.sort((a, b) => b.timestamp - a.timestamp);
+    
+                // Reverse Log ID while maintaining descending timestamp order
+                logs.forEach((log, index) => {
+                    const row = logTable.insertRow();
+                    row.innerHTML = `
+                        <td>${logs.length - index}</td>
+                        <td>${log.eventType}</td>
+                        <td>${log.description}</td>
+                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                    `;
+                });
+    
+                if (logs.length === 0) {
+                    const row = logTable.insertRow();
+                    row.innerHTML = `<td colspan="5" class="text-center">No logs available.</td>`;
+                }
+            } catch (error) {
+                console.error("Error loading admin logs:", error);
+                alert("Failed to load admin logs. Please try again later.");
+            }
+        }
+    
+        // Admin Logout
+        async function adminLogout() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const adminAccount = accounts[0];
+    
+                const logoutFee = await contractInstance.methods.logoutFee().call();
+                await contractInstance.methods.log_admin_logout().send({
+                    from: adminAccount,
+                    value: logoutFee,
+                });
+    
+                alert("Logged out successfully!");
+                localStorage.clear(); // Clear session
+                location.href = "./index.html";
+            } catch (error) {
+                console.error("Error during admin logout:", error);
+                alert("Failed to log out.");
+            }
+        }
+    
+        async function initializePage() {
+            try {
+                const web3Initialized = await initializeWeb3();
+                if (!web3Initialized || !validateSession()) return;
+    
+                await loadAdminLogs(); // Load logs after validation
+            } catch (error) {
+                console.error("Error initializing admin logs page:", error);
+                alert("An error occurred. Redirecting to login page...");
+                location.href = "./index.html";
+            }
+        }
+    
+        initializePage(); // Initialize the page on load
+    </script>
+    
+</body>
+
+</html>

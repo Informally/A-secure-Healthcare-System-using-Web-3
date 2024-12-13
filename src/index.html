@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>ZHAN QUAN HOSPITAL</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            font-family: 'Poppins', sans-serif; /* Applying Poppins font */
+        }
+
+        .video-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            filter: brightness(0.6);
+        }
+
+        .navbar {
+            z-index: 10;
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: #ffffff !important;
+            font-weight: 600; /* Semi-bold weight for title */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            font-weight: 400; /* Normal weight for links */
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        .content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 15px;
+            width: 400px;
+            margin: 5% auto;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.8);
+            animation: fadeIn 2s ease;
+        }
+
+        .content h3 {
+            margin-bottom: 20px;
+            font-size: 2rem;
+            font-weight: 600; /* Semi-bold for heading */
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .content img {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 20px;
+            border-radius: 50%;
+            border: 2px solid #ffd700;
+        }
+
+        .content p {
+            font-size: 1.5rem;
+            color: #ddd;
+            font-weight: 400; /* Normal weight for paragraph */
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            background-color: #2c2c2c;
+            color: white;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            font-size: 1.3rem; /* Slightly larger input text */
+        }
+
+        .form-control:focus {
+            border-color: #ffd700;
+            box-shadow: 0 0 5px #ffd700;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600; /* Semi-bold for buttons */
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Video Background -->
+    <video class="video-bg" autoplay muted loop>
+        <source src="media/animation.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">ZHAN QUAN HOSPITAL</a>
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="active"><a href="./index.html">Login</a></li>
+                    <li><a href="./register.html">Register</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="content">
+        <h3>Welcome to ZHAN QUAN HOSPITAL</h3>
+        <img src="favicon.ico" alt="Hospital Logo">
+        <p>Login with your username and password linked with your Metamask account</p>
+        <form id="loginForm" onsubmit="return handleLogin(event)">
+            <div class="form-group">
+                <input type="text" id="username" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" class="form-control" placeholder="Password" required>
+            </div>
+            <div style="display: flex; justify-content: center; gap: 20px;">
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100px">Login</button>
+                <button type="button" class="btn btn-primary btn-lg" style="width: 100px" onclick="location.href='./register.html'">Register</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Include jQuery First -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Include Web3.js and App.js -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+
+    <script>
+        let web3;
+        let contractInstance;
+    
+        // Initialize Web3 on Page Load
+        async function initializeWeb3() {
+            if (!window.ethereum) {
+                alert("Please install MetaMask to use this application.");
+                return;
+            }
+    
+            try {
+                web3 = new Web3(window.ethereum);
+                await window.ethereum.request({ method: "eth_requestAccounts" });
+                contractInstance = new web3.eth.Contract(contractABI, contractAddress);
+                console.log("MetaMask connected and contract instance initialized.");
+            } catch (error) {
+                console.error("Error initializing Web3:", error);
+                alert("Failed to connect to MetaMask. Ensure MetaMask is installed and unlocked.");
+            }
+        }
+    
+        window.onload = initializeWeb3;
+    
+        // Handle User Login
+        async function handleLogin(event) {
+            event.preventDefault();
+    
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+    
+            if (!web3) {
+                alert("MetaMask is not connected. Please install and connect it.");
+                return;
+            }
+    
+            // Show loading indicator
+            const loginButton = document.querySelector("button[type='submit']");
+            loginButton.disabled = true;
+            loginButton.textContent = "Logging in...";
+    
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const publicKey = accounts[0];
+    
+                console.log("Attempting to authenticate user with address:", publicKey);
+    
+                // Attempt authentication
+                const isAuthenticated = await contractInstance.methods
+                    .authenticate(username, password)
+                    .call({ from: publicKey });
+    
+                if (isAuthenticated) {
+                    console.log("Authentication successful");
+    
+                    // Check user roles
+                    const isAdmin = await contractInstance.methods.checkAdmin(publicKey).call();
+                    const doctorInfo = await contractInstance.methods.get_doctor(publicKey).call();
+                    const patientInfo = await contractInstance.methods.get_patient(publicKey).call();
+                    const nurseInfo = await contractInstance.methods.get_nurse(publicKey).call();
+                    const isPatientPending = await contractInstance.methods.isPendingPatientApproval(publicKey).call();
+                    const isDoctorPending = await contractInstance.methods.isPendingDoctorApproval(publicKey).call();
+                    const isNursePending = await contractInstance.methods.isPendingNurseApproval(publicKey).call();
+    
+                    // Handle role-based navigation
+                    if (isAdmin) {
+                        localStorage.setItem("sessionToken", "valid");
+                        localStorage.setItem("userRole", "admin");
+                        localStorage.setItem("loggedInAddress", publicKey);
+                        location.href = "./administrator.html";
+                    } else if (doctorInfo[0]) {
+                        localStorage.setItem("sessionToken", "valid");
+                        localStorage.setItem("userRole", "doctor");
+                        localStorage.setItem("loggedInAddress", publicKey);
+                        location.href = "./doctor.html";
+                    } else if (patientInfo[0]) {
+                        localStorage.setItem("sessionToken", "valid");
+                        localStorage.setItem("userRole", "patient");
+                        localStorage.setItem("loggedInAddress", publicKey);
+                        location.href = "./patient.html";
+                    } else if (nurseInfo[0]) {
+                        localStorage.setItem("sessionToken", "valid");
+                        localStorage.setItem("userRole", "patient");
+                        localStorage.setItem("loggedInAddress", publicKey);
+                        location.href = "./nurse.html";
+                    } else if (isPatientPending || isDoctorPending || isNursePending) {
+                        alert("Your registration request is pending approval. Please wait for admin approval.");
+                    } else {
+                        alert("Unrecognized user or your registration may still be pending.");
+                    }
+                } else {
+                    alert("Invalid username or password. Please try again.");
+                }
+            } catch (error) {
+                console.error("Error during login:", error);
+    
+                // Enhanced error handling
+                if (error.message.includes("revert")) {
+                    alert("Authentication failed: Invalid username or password.");
+                } else if (error.message.includes("Internal JSON-RPC error")) {
+                    alert("Incorrect Credentials. Please try again.");
+                } else {
+                    alert("An unexpected error occurred. Please check the console for details.");
+                }
+            } finally {
+                // Reset loading indicator
+                loginButton.disabled = false;
+                loginButton.textContent = "Login";
+            }
+        }
+    </script>
+    
+</body>
+
+</html>

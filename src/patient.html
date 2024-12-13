@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Patient Dashboard</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <style>
+        body,
+        html {
+            height: 100%;
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.8rem;
+            color: #ffffff !important;
+            font-weight: 600;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        .panel {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel-heading {
+            background-color: #282828;
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.5rem;
+            padding: 15px;
+            border-top-left-radius: 10px;
+            border-top-right-radius: 10px;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+            margin: 0 auto;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            border-top: 1px solid #444;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .btn-navigation {
+            background-color: #2979ff; /* Primary blue color */
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 5px;
+            font-size: 1.2rem; /* Match the size of Request Connection button */
+            font-weight: 600; /* Semi-bold for better visibility */
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5); /* Subtle shadow */
+            transition: background-color 0.3s, transform 0.2s; /* Smooth transitions */
+        }
+
+        .btn-navigation:hover {
+            background-color: #1e60cc; /* Slightly darker shade on hover */
+            transform: scale(1.05); /* Slight enlarge effect */
+        }
+
+        .btn-navigation:active {
+            transform: scale(0.95); /* Slightly smaller when clicked */
+        }
+
+        .btn-navigation + .btn-navigation {
+            margin-left: 20px; /* Spacing between buttons */
+        }
+
+        .form-control {
+            width: 100%;
+            background-color: #1c1c1c;
+            color: #ffffff;
+            border: 1px solid #333;
+            border-radius: 5px;
+            margin: 0 auto; /* Centers the dropdown */
+            padding: 10px;
+            font-size: 1.3rem;
+            font-weight: 500; /* Slightly bolder font */
+            font-family: 'Poppins', sans-serif; /* Consistent font */
+            appearance: none; /* Remove default dropdown styling */
+            box-shadow: none;
+        }
+
+        .form-control:hover,
+        .form-control:focus {
+            background-color: #282828;
+            border-color: #2979ff;
+            box-shadow: 0px 0px 5px #2979ff;
+        }
+
+        .form-control option {
+            background-color: #1c1c1c;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+            text-align: center;
+            font-size: 1.3rem;
+            padding: 10px;
+        }
+
+        .form-control option:hover {
+            background-color: #2a2a2a;
+            color: #ffd700;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Patient Dashboard</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a id="logoutButton" href="#">Logout</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <!-- Personal Information -->
+        <div class="panel">
+            <div class="panel-heading">Personal Information</div>
+            <div class="panel-body">
+                <table class="table">
+                    <tr>
+                        <th>Name:</th>
+                        <td id="name">Loading...</td>
+                    </tr>
+                    <tr>
+                        <th>Age:</th>
+                        <td id="age">Loading...</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Medical Records Access Management -->
+        <div class="panel">
+            <div class="panel-heading">Connect with Available Doctors</div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label for="doctorSelect">Doctor</label>
+                    <select class="form-control" id="doctorSelect" required style="padding-top: 5px; padding-bottom: 5px; line-height: 1.8;">
+                        <option value="" selected>-- Please Select --</option>
+                    </select>
+                </div>
+                <button class="btn btn-primary" onclick="requestAccess()">Request Connection</button>
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-heading">Current Doctors with Access</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Public Key</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="accessTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Navigation to Other Pages -->
+        <div class="panel">
+            <div class="panel-heading">Additional Functions</div>
+            <div class="panel-body text-center">
+                <a href="patient_medical_records.html" class="btn btn-primary btn-lg" style="width: 150px; margin-right: 20px;">Medical Records</a>
+                <a href="patient_logs.html" class="btn btn-primary btn-lg" style="width: 150px;">View Logs</a>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        async function initializePage() {
+            try {
+                console.log("Validating session...");
+                await validateLogin(); // Ensure session exists before initializing Web3
+
+                console.log("Initializing MetaMask and smart contract...");
+                await initializeWeb3(); // Only initialize Web3 if session is valid
+
+                console.log("Validating role as patient...");
+                await validateRole("patient"); // Ensure the user has the "patient" role
+
+                // Log the patient login only once, and only if not already logged
+                if (!sessionStorage.getItem("patientLoggedIn")) {
+                    console.log("Logging patient login...");
+                    await logPatientLogin(); // Log the patient's login with a gas payment
+                    sessionStorage.setItem("patientLoggedIn", "true");
+                }
+
+                console.log("Loading patient dashboard...");
+                attachLogout(); // Attach logout functionality
+                await loadPatientDetails(); // Load patient details
+                await loadDoctorList(); // Load list of doctors
+                await loadAccessList(); // Load current access list
+            } catch (error) {
+                console.error("Error initializing patient page:", error.message);
+                alert("Unauthorized access or initialization failure. Redirecting to login page...");
+                location.href = "./index.html";
+            }
+        }
+
+        async function loadPatientDetails() {
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+            try {
+                const patientData = await contractInstance.methods.get_patient(publicKey).call();
+                document.getElementById("name").textContent = patientData[0];
+                document.getElementById("age").textContent = patientData[1];
+            } catch (error) {
+                console.error("Error loading patient details:", error);
+            }
+        }
+
+        // Log the patient's login (requires gas payment)
+        async function logPatientLogin() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const patientAddress = accounts[0]; // Correct variable name for patient address
+
+                // Call the `log_patient_login` method to log the login
+                await contractInstance.methods.log_patient_login().send({ from: patientAddress });
+                console.log("Patient login logged successfully.");
+            } catch (error) {
+                console.error("Error logging patient login:", error);
+                alert("Failed to log patient login. Please try again.");
+                throw error; // Prevent further access if logging fails
+            }
+        }
+
+        async function loadDoctorList() {
+            try {
+                const doctorList = await contractInstance.methods.get_doctor_list().call();
+                const doctorSelect = document.getElementById("doctorSelect");
+                doctorSelect.innerHTML = `<option value="" selected>-- Please Select --</option>`;
+                for (const doctor of doctorList) {
+                    const doctorDetails = await contractInstance.methods.get_doctor(doctor).call();
+                    const option = document.createElement("option");
+                    option.value = doctor;
+                    option.textContent = doctorDetails[0];
+                    doctorSelect.appendChild(option);
+                }
+            } catch (error) {
+                console.error("Error loading doctor list:", error);
+            }
+        }
+
+        async function loadAccessList() {
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+            const accessTable = document.getElementById("accessTable");
+            accessTable.innerHTML = "";
+
+            try {
+                const accessList = await contractInstance.methods.get_accessed_doctorlist_for_patient(publicKey).call();
+                const allDoctors = await contractInstance.methods.get_doctor_list().call();
+
+                for (const doctor of allDoctors) {
+                    const doctorDetails = await contractInstance.methods.get_doctor(doctor).call();
+                    let status = "No Request";
+
+                    if (accessList.includes(doctor)) {
+                        status = "Access Granted";
+                    } else {
+                        const pendingRequests = await contractInstance.methods.get_access_requests(doctor).call();
+                        if (pendingRequests.includes(publicKey)) {
+                            status = "Request Pending";
+                        }
+                    }
+
+            const row = `<tr>
+                <td>${doctorDetails[0]}</td>
+                <td>${doctor}</td>
+                <td>${status}</td>
+            </tr>`;
+            accessTable.innerHTML += row;
+        }
+            } catch (error) {
+                console.error("Error loading access list:", error);
+            }
+        }
+
+
+        async function requestAccess() {
+            const doctorAddress = document.getElementById("doctorSelect").value;
+            if (!doctorAddress) {
+                alert("Please select a doctor.");
+                return;
+            }
+
+            const accounts = await web3.eth.getAccounts();
+            const publicKey = accounts[0];
+
+            try {
+                // Check if there's already access to this doctor
+                const accessList = await contractInstance.methods.get_accessed_doctorlist_for_patient(publicKey).call();
+                if (accessList.includes(doctorAddress)) {
+                    alert("Access already granted by this doctor.");
+                    return;
+                }
+
+                // Check if there's already a pending request
+                const pendingRequests = await contractInstance.methods.get_access_requests(doctorAddress).call();
+                if (pendingRequests.includes(publicKey)) {
+                    alert("Request already sent to this doctor. Awaiting approval.");
+                    return;
+                }
+
+                // Send the access request
+                await contractInstance.methods.request_access(doctorAddress).send({ from: publicKey });
+                alert("Request sent successfully!");
+                await loadAccessList(); // Reload the access list
+            } catch (error) {
+                console.error("Error requesting access:", error);
+                alert("Failed to request access.");
+            }
+        }
+
+        // Call `initializePage` directly on script execution (page load)
+        initializePage();
+    </script>
+</body>
+
+</html>

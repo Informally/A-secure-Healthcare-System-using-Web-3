@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Medical Records</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        .panel {
+            background-color: #1c1c1c;
+            border: 1px solid #333;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .panel-heading {
+            background-color: #282828;
+            color: #ffffff;
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 10px;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+        }
+
+        .panel-body {
+            padding: 20px;
+        }
+
+        .table {
+            color: #ffffff;
+        }
+
+        .table th,
+        .table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .form-control {
+            background-color: #333;
+            color: #ffffff;
+            border: 1px solid #555;
+            border-radius: 4px;
+        }
+
+        .form-control:focus {
+            background-color: #333;
+            color: #ffffff;
+            border-color: #2979ff;
+            box-shadow: 0 0 5px #2979ff;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="patient.html">Patient Dashboard</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="patient.html">Dashboard</a></li>
+                <li><a href="patient_logs.html">Logs</a></li>
+                <li><a id="logoutButton" href="#">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <!-- View Existing Records -->
+        <div class="panel">
+            <div class="panel-heading">Existing Medical Records</div>
+            <div class="panel-body">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Diagnosis</th>
+                            <th>Timestamp</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="medicalRecordsTable"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Description and Edit Section -->
+        <div class="panel" id="descriptionPanel" style="display: none;">
+            <div class="panel-heading" id="descriptionTitle">View/Edit Description</div>
+            <div class="panel-body">
+                <form>
+                    <div class="form-group">
+                        <textarea class="form-control" id="newDescription" placeholder="Edit description" style="resize: none; height: 150px;"></textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary" style="width: 150px; margin-right: 20px;" onclick="saveEditedDescription()">Save Changes</button>
+                        <button type="button" class="btn btn-danger" style="width: 150px;" onclick="closeDescriptionPanel()">Close</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        let editingIndex = -1;
+
+        async function initializePage() {
+            try {
+                console.log("Validating session...");
+                await validateLogin(); // Ensure the user is logged in
+
+                console.log("Initializing MetaMask and smart contract...");
+                await initializeWeb3(); // Initialize Web3
+
+                console.log("Validating role as patient...");
+                await validateRole("patient"); // Ensure the user has the "patient" role
+
+                console.log("Loading medical records...");
+                await loadMedicalRecords(); // Load existing medical records
+
+                console.log("Attaching logout functionality...");
+                attachLogout(); // Attach logout functionality
+            } catch (error) {
+                console.error("Error initializing medical records page:", error.message);
+                alert("Unauthorized access or initialization failure. Redirecting to login page...");
+                location.href = "./index.html";
+            }
+        }
+
+        async function loadMedicalRecords() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const publicKey = accounts[0];
+                const result = await contractInstance.methods.getMedicalRecords(publicKey).call();
+
+                const tableBody = document.getElementById("medicalRecordsTable");
+                tableBody.innerHTML = "";
+
+                const records = [];
+                result[0].forEach((diagnosis, index) => {
+                    records.push({
+                        diagnosis,
+                        description: result[1][index],
+                        timestamp: Number(result[2][index]) * 1000,
+                        index,
+                    });
+                });
+
+                records.sort((a, b) => b.timestamp - a.timestamp);
+
+                records.forEach((record) => {
+                    const row = `
+                        <tr>
+                            <td>${record.diagnosis}</td>
+                            <td>${new Date(record.timestamp).toLocaleString()}</td>
+                            <td>
+                                <button class="btn btn-primary" onclick="viewDescription(${record.index}, '${encodeURIComponent(record.diagnosis)}', '${encodeURIComponent(record.description)}')">View/Edit</button>
+                            </td>
+                        </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error("Error loading medical records:", error);
+            }
+        }
+
+        function viewDescription(index, diagnosis, description) {
+            editingIndex = index;
+            document.getElementById("descriptionTitle").innerText = `View/Edit: ${decodeURIComponent(diagnosis)}`;
+            document.getElementById("newDescription").value = decodeURIComponent(description);
+            document.getElementById("descriptionPanel").style.display = "block";
+        }
+
+        async function saveEditedDescription() {
+            const newDescription = document.getElementById("newDescription").value;
+
+            if (editingIndex === -1 || !newDescription.trim()) {
+                alert("Invalid input.");
+                return;
+            }
+
+            try {
+                const accounts = await web3.eth.getAccounts();
+                await contractInstance.methods.editPatientRecord(editingIndex, newDescription).send({ from: accounts[0] });
+                alert("Record updated successfully!");
+                document.getElementById("descriptionPanel").style.display = "none";
+                loadMedicalRecords();
+            } catch (error) {
+                console.error("Error updating record:", error);
+            }
+        }
+
+        function closeDescriptionPanel() {
+            editingIndex = -1;
+            document.getElementById("descriptionPanel").style.display = "none";
+        }
+
+        initializePage(); // Initialize the page on load
+    </script>
+</body>
+
+</html>

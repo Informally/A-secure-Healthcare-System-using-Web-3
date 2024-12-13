@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nurse Logs</title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="favicon.ico" />
+
+    <!-- Custom CSS -->
+    <style>
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .navbar {
+            background-color: rgba(0, 0, 0, 0.8);
+            border: none;
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            color: #ffffff !important;
+            font-weight: 600;
+        }
+
+        .navbar-nav li a {
+            color: #ffffff !important;
+            font-size: 1.3rem;
+            transition: color 0.3s;
+        }
+
+        .navbar-nav li a:hover {
+            color: #ffd700 !important;
+        }
+
+        h2 {
+            margin-top: 20px;
+            font-size: 2rem;
+            text-align: center;
+            font-weight: 600;
+            text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .table {
+            width: 100%;
+            background-color: #1c1c1c;
+            color: #ffffff;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            text-align: center;
+        }
+
+        .table th,
+        .table td {
+            padding: 12px;
+            border: 1px solid #333;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .table th {
+            background-color: #282828;
+            color: #2979ff;
+            font-weight: 600;
+        }
+
+        .table-hover tbody tr:hover {
+            background-color: #2a2a2a;
+        }
+
+        .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            margin: 10px 0;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        .btn-danger {
+            background-color: #d32f2f;
+            border: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            padding: 10px 20px;
+            margin: 10px 0;
+            transition: background-color 0.3s, transform 0.2s;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-danger:hover {
+            background-color: #b71c1c;
+            transform: scale(1.05);
+        }
+
+        .btn-navigation {
+            margin: 10px;
+            background-color: #2979ff;
+            border: none;
+            color: white;
+            padding: 10px 30px;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 600;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.5);
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .btn-navigation:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        h2 {
+            font-size: 2rem;
+            margin-top: 20px;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-static-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="nurse.html">Nurse Dashboard</a>
+            </div>
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="nurse.html">Dashboard</a></li>
+                <li><a id="logoutButton" href="#">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+        <h2 class="text-center">Nurse Activity Logs</h2>
+        <div class="table-container">
+            <table class="table table-hover" id="logTable">
+                <thead>
+                    <tr>
+                        <th>Log ID</th>
+                        <th>Event Type</th>
+                        <th>Description</th>
+                        <th>Timestamp</th>
+                        <th>Status/Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Logs will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+    <script src="js/jquery.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/contractConfig.js"></script>
+    <script src="js/utils.js"></script>
+
+    <script>
+        async function initializePage() {
+            try {
+                console.log("Validating session...");
+                await validateLogin(); // Ensure the user is logged in
+
+                console.log("Validating role as nurse...");
+                await validateRole("nurse"); // Ensure the user has the nurse role
+
+                console.log("Initializing Web3...");
+                await initializeWeb3(); // Initialize Web3
+
+                console.log("Loading nurse logs...");
+                await loadNurseLogs(); // Load logs
+
+                attachLogout(); // Attach logout functionality
+            } catch (error) {
+                console.error("Error initializing nurse logs page:", error.message);
+                alert("Unauthorized access. Redirecting to login page...");
+                location.href = "./index.html";
+            }
+        }
+
+        async function loadNurseLogs() {
+            try {
+                const accounts = await web3.eth.getAccounts();
+                const publicKey = accounts[0];
+                const logTable = document.getElementById("logTable").getElementsByTagName("tbody")[0];
+                logTable.innerHTML = ""; // Clear existing logs
+
+                const logs = [];
+
+                // Fetch Nurse Login logs
+                const loginLogs = await contractInstance.getPastEvents("NurseLoggedIn", {
+                    filter: { nurse: publicKey },
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+
+                for (const log of loginLogs) {
+                    logs.push({
+                        eventType: "Login",
+                        description: "Nurse logged in.",
+                        timestamp: Number(BigInt(log.returnValues.timestamp)), // Convert BigInt to Number
+                        action: "Logged In",
+                    });
+                }
+
+                // Fetch Nurse Logout logs
+                const logoutLogs = await contractInstance.getPastEvents("NurseLoggedOut", {
+                    filter: { nurse: publicKey },
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+
+                for (const log of logoutLogs) {
+                    logs.push({
+                        eventType: "Logout",
+                        description: "Nurse logged out.",
+                        timestamp: Number(BigInt(log.returnValues.timestamp)), // Convert BigInt to Number
+                        action: "Logged Out",
+                    });
+                }
+
+                // Sort logs by timestamp (descending)
+                logs.sort((a, b) => b.timestamp - a.timestamp);
+
+                // Assign Log ID starting from 1 at the bottom
+                logs.reverse().forEach((log, index) => {
+                    log.logId = index + 1; // Assign incrementing Log ID
+                });
+
+                // Reverse back to descending order
+                logs.reverse();
+
+                // Populate table
+                logs.forEach((log) => {
+                    const row = logTable.insertRow();
+                    row.innerHTML = `
+                        <td>${log.logId}</td>
+                        <td>${log.eventType}</td>
+                        <td>${log.description}</td>
+                        <td>${new Date(log.timestamp * 1000).toLocaleString()}</td>
+                        <td>${log.action}</td>
+                    `;
+                });
+
+                if (logs.length === 0) {
+                    const row = logTable.insertRow();
+                    row.innerHTML = `<td colspan="5" class="text-center">No logs available.</td>`;
+                }
+            } catch (error) {
+                console.error("Error loading logs:", error);
+            }
+        }
+
+        initializePage(); // Initialize the page on load
+
+    </script>
+</body>
+
+</html>
