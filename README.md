@@ -23,6 +23,7 @@ To run the system, you need:
 
 - [Node.js](https://nodejs.org/) installed.
 - MetaMask browser extension installed and configured.
+- [Ganache](https://trufflesuite.com/ganache/) installed for local Ethereum blockchain.
 - `lite-server` installed (as part of the project dependencies).
 - Access to Remix IDE for deploying the smart contract.
 
@@ -62,7 +63,19 @@ npm install
 
 ---
 
-### Step 4: Start the Server
+### Step 4: Start the Local Blockchain (Ganache)
+
+1. Open Ganache and create a new workspace or use the Quickstart Ethereum option.
+2. Copy the RPC server URL (e.g., http://127.0.0.1:7545) and configure MetaMask to connect to this local blockchain:
+    -Open MetaMask and go to Settings > Networks.
+    -Add a new network with the following details:
+            -Network Name: Ganache
+            -RPC URL: http://127.0.0.1:7545
+            -Chain ID: 1337
+            -Currency Symbol: ETH
+3. Import one of the private keys provided by Ganache into MetaMask.
+
+### Step 5: Start the Server
 
 Run the application locally using:
 
