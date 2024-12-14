@@ -67,9 +67,10 @@
         }
 
         .table {
-            color: #ffffff;
-            width: 100%;
-            border-collapse: collapse;
+        color: #ffffff;
+        width: 100%;
+        border-collapse: collapse;
+        table-layout: fixed; /* Ensure consistent column width */
         }
 
         .table th,
@@ -78,11 +79,21 @@
             vertical-align: middle;
             padding: 12px;
             border: 1px solid #333;
+            word-wrap: break-word; /* Wrap content for long texts */
+            overflow-wrap: break-word;
         }
 
         .table th {
             background-color: #2c2c2c;
             color: #2979ff;
+        }
+
+        .table td {
+            white-space: normal; /* Allow text wrapping */
+        }
+
+        .table-container {
+            overflow-x: auto; /* Add horizontal scroll for responsiveness */
         }
 
         .table-hover tbody tr:hover {
