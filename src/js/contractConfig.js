@@ -1802,7 +1802,7 @@ const contractABI = [
 	}
 ];
 
-const contractAddress = '0x871b66bC14C561473bEf58D3Ec7FAca7Be036d28'; // Your contract address
+const contractAddress = '0x00f2121781A70CFBe9B622365e387e693F28d851'; // Your contract address
 
 // Make the variables globally accessible
 window.contractABI = contractABI;

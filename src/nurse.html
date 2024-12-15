@@ -158,6 +158,82 @@
             background-color: #1e60cc;
             transform: scale(1.05);
         }
+
+        /* Styles for Registered Patients Table */
+        .registered-patients-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+            background-color: #1c1c1c;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.8);
+            border-radius: 10px;
+        }
+
+        .registered-patients-table th {
+            background-color: #282828;
+            color: white;
+            padding: 15px;
+            font-size: 1.3rem;
+            font-weight: 600;
+            text-align: center;
+            border-top: 1px solid #444;
+            border-bottom: 1px solid #444;
+            border-radius: 5px;
+        }
+
+        .registered-patients-table td {
+            background-color: #2a2a2a;
+            padding: 12px;
+            font-size: 1.3rem;
+            text-align: center;
+            border-radius: 5px;
+            vertical-align: middle;
+        }
+
+        .registered-patients-table tbody tr:hover td {
+            background-color: #333333;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .registered-patients-table input.form-control {
+            background-color: #1e1e1e;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 8px;
+            font-size: 1.3rem;
+            width: 100%;
+        }
+
+        .registered-patients-table .btn-primary {
+            background-color: #2979ff;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s ease-in-out;
+            color: #fff;
+        }
+
+        .registered-patients-table .btn-primary:hover {
+            background-color: #1e60cc;
+            transform: scale(1.05);
+        }
+
+        .registered-patients-table .btn-info {
+            background-color: #00bcd4;
+            color: #fff;
+            font-size: 1.3rem;
+            padding: 8px 12px;
+            border-radius: 5px;
+        }
+
+        .registered-patients-table .btn-info:hover {
+            background-color: #0097a7;
+            transform: scale(1.05);
+        }
     </style>
 </head>
 
@@ -193,27 +269,27 @@
             </div>
         </div>
 
-    <!-- Registered Patients -->
-    <div class="panel">
-        <div class="panel-heading">Registered Patients</div>
-        <div class="panel-body">
-            <table class="table table-hover" id="registeredPatientsTable">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Address</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Registered patients rows will be dynamically inserted -->
-                </tbody>
-            </table>
+        <div class="panel">
+            <div class="panel-heading">Registered Patients</div>
+            <div class="panel-body">
+                <table class="table table-hover registered-patients-table" id="registeredPatientsTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Age</th>
+                            <th>Address</th>
+                            <th>Remarks</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Rows dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-
+        
     <!-- Patient Medical Records -->
     <div class="panel" id="patientRecordsPanel" style="display: none;">
         <div class="panel-heading">
@@ -251,27 +327,24 @@
 
     <script>
         let currentPatient = null;
-
+    
         async function initializePage() {
             try {
                 console.log("Validating session...");
-                await validateLogin(); // Ensure session exists before initializing Web3
-
+                await validateLogin();
+    
                 console.log("Initializing MetaMask and smart contract...");
-                await initializeWeb3(); // Only initialize Web3 if session is valid
+                await initializeWeb3();
                 console.log("Validating role as nurse...");
-                await validateRole("nurse"); // Ensure the user has the "nurse" role
-
-                // Log the nurse's login (only if not already logged in this session)
+                await validateRole("nurse");
+    
                 const hasLoggedIn = localStorage.getItem("nurseLoggedIn");
                 if (!hasLoggedIn) {
-                    await logNurseLogin(); // Gas payment made here
-                    localStorage.setItem("nurseLoggedIn", "true"); // Mark as logged
-                    console.log("Nurse login logged and marked for session.");
-                } else {
-                    console.log("Nurse login already logged in this session.");
+                    await logNurseLogin();
+                    localStorage.setItem("nurseLoggedIn", "true");
+                    console.log("Nurse login logged.");
                 }
-
+    
                 console.log("Loading nurse dashboard...");
                 await loadNurseDetails();
                 await loadRegisteredPatients();
@@ -282,32 +355,19 @@
                 location.href = "./index.html";
             }
         }
-
-        // Log the nurse's login (requires gas payment)
+    
         async function logNurseLogin() {
             try {
-                if (!web3 || !contractInstance) {
-                    await initializeWeb3();
-                }
-
                 const accounts = await web3.eth.getAccounts();
-                if (!accounts.length) {
-                    throw new Error("No MetaMask accounts detected. Please connect your MetaMask wallet.");
-                }
-
-                const nurseAddress = accounts[0];
-                console.log("Nurse's MetaMask address:", nurseAddress);
-
-                // Call the `log_nurse_login` method with `send` to require gas
-                await contractInstance.methods.log_nurse_login().send({ from: nurseAddress });
+                await contractInstance.methods.log_nurse_login().send({ from: accounts[0] });
                 console.log("Nurse login logged successfully.");
             } catch (error) {
                 console.error("Error logging nurse login:", error);
-                alert("Failed to log nurse login. Please try again.");
-                throw error; // Prevent further access if logging fails
+                alert("Failed to log nurse login.");
+                throw error;
             }
         }
-
+    
         async function loadNurseDetails() {
             const accounts = await web3.eth.getAccounts();
             const publicKey = accounts[0];
@@ -315,28 +375,82 @@
             document.getElementById("name").textContent = nurse[0] || "N/A";
             document.getElementById("age").textContent = nurse[1] || "N/A";
         }
-        
+    
+        async function saveRemarks(patientAddress) {
+            const remarksInput = document.getElementById(`remarks_${patientAddress}`).value.trim();
+            if (!remarksInput) {
+                alert("Remarks cannot be empty!");
+                return;
+            }
+    
+            try {
+                const accounts = await web3.eth.getAccounts();
+                await contractInstance.methods.saveRemarks(patientAddress, remarksInput).send({ from: accounts[0] });
+                console.log(`Remarks saved for ${patientAddress}: ${remarksInput}`);
+                alert("Remarks saved successfully.");
+            } catch (error) {
+                console.error("Error saving remarks:", error);
+                alert("Failed to save remarks.");
+            }
+        }
+    
+        async function viewRemarks(patientAddress) {
+            try {
+                console.log(`Fetching remarks for patient: ${patientAddress}`);
+
+                // Call the correct getRemarks function from the contract
+                const result = await contractInstance.methods.getRemarks(patientAddress).call();
+
+                // Extract remarks and authors from the returned object
+                const remarks = result[0]; // First array (remarks)
+                const authors = result[1]; // Second array (authors)
+
+                // Get the current nurse's MetaMask address
+                const accounts = await web3.eth.getAccounts();
+                const nurseAddress = accounts[0].toLowerCase();
+
+                // Filter remarks authored by the current nurse
+                const nurseRemarks = remarks.filter((_, index) => authors[index].toLowerCase() === nurseAddress);
+
+                if (nurseRemarks.length === 0) {
+                    alert("No remarks authored by you for this patient.");
+                } else {
+                    alert(`Your remarks for this patient:\n${nurseRemarks.join("\n")}`);
+                }
+            } catch (error) {
+                console.error("Error viewing remarks:", error);
+                alert("Failed to fetch remarks. Please check the contract or network connection.");
+            }
+        }
+
         async function loadRegisteredPatients() {
             try {
                 const registeredPatients = await contractInstance.methods.get_patient_list().call();
                 const tableBody = document.getElementById("registeredPatientsTable").querySelector("tbody");
                 tableBody.innerHTML = "";
-
+    
                 if (registeredPatients.length === 0) {
-                    tableBody.innerHTML = `<tr><td colspan="5">No registered patients found.</td></tr>`;
+                    tableBody.innerHTML = `<tr><td colspan="6">No registered patients found.</td></tr>`;
                     return;
                 }
-
+    
                 for (let i = 0; i < registeredPatients.length; i++) {
                     const patientAddress = registeredPatients[i];
                     const patientDetails = await contractInstance.methods.get_patient(patientAddress).call();
-
+    
                     const row = `<tr>
                         <td>${i + 1}</td>
                         <td>${patientDetails[0]}</td>
                         <td>${patientDetails[1]}</td>
                         <td>${patientAddress}</td>
-                        <td><button class="btn btn-primary" onclick="viewPatientRecords('${patientAddress}')">View Records</button></td>
+                        <td>
+                            <input type="text" id="remarks_${patientAddress}" class="form-control" placeholder="Enter remarks" />
+                        </td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="viewPatientRecords('${patientAddress}')">View Records</button>
+                            <button class="btn btn-primary btn-sm" onclick="saveRemarks('${patientAddress}')">Save Remarks</button>
+                            <button class="btn btn-primary btn-sm" style="background-color: #0097a7;" onclick="viewRemarks('${patientAddress}')">View Remarks</button>
+                        </td>
                     </tr>`;
                     tableBody.innerHTML += row;
                 }
@@ -345,18 +459,17 @@
                 alert("Failed to load registered patients.");
             }
         }
-
+    
         async function viewPatientRecords(patientAddress) {
             try {
-                currentPatient = patientAddress; // Assign the current patient address
-
+                currentPatient = patientAddress;
                 const records = await contractInstance.methods.getMedicalRecords(patientAddress).call();
                 const recordDropdown = document.getElementById("recordDropdown");
                 const recordContainer = document.getElementById("selectedRecordContainer");
-
+    
                 recordDropdown.innerHTML = `<option value="" disabled selected>--Select Diagnosis--</option>`;
                 recordContainer.innerHTML = "";
-
+    
                 if (records[0].length) {
                     records[0].forEach((diagnosis, index) => {
                         const option = document.createElement("option");
@@ -364,7 +477,7 @@
                         option.textContent = diagnosis;
                         recordDropdown.appendChild(option);
                     });
-
+    
                     document.getElementById("patientRecordsPanel").style.display = "block";
                 } else {
                     alert("No records available for this patient.");
@@ -374,32 +487,30 @@
                 alert("Failed to load patient records.");
             }
         }
-
+    
         async function loadSelectedRecord() {
             const recordDropdown = document.getElementById("recordDropdown");
             const recordContainer = document.getElementById("selectedRecordContainer");
             const selectedIndex = recordDropdown.value;
-
+    
             if (selectedIndex === "") {
                 recordContainer.innerHTML = "<p>No record selected.</p>";
                 return;
             }
-
+    
             try {
                 if (!currentPatient) {
                     throw new Error("No patient selected.");
                 }
-
+    
                 const records = await contractInstance.methods.getMedicalRecords(currentPatient).call();
-
-                const selectedDiagnosis = records[0][selectedIndex]; // Diagnosis title
-                const selectedDescription = records[1][selectedIndex]; // IPFS hash or description
+                const selectedDescription = records[1][selectedIndex];
                 const timestamp = new Date(Number(records[2][selectedIndex]) * 1000).toLocaleString();
-
+    
                 recordContainer.innerHTML = `
                     <div class="form-group">
                         <label for="descriptionBox"><strong>Description:</strong></label>
-                        <textarea id="descriptionBox" class="form-control" rows="4" style="background-color: #333" readonly>${selectedDescription}</textarea>
+                        <textarea id="descriptionBox" class="form-control" rows="4" style="background-color: #2a2a2a;" readonly>${selectedDescription}</textarea>
                     </div>
                     <p><strong>Timestamp:</strong> ${timestamp}</p>
                 `;
@@ -408,98 +519,12 @@
                 recordContainer.innerHTML = "<p>Error loading the selected record.</p>";
             }
         }
-
+    
         function closeRecordsPanel() {
             document.getElementById("patientRecordsPanel").style.display = "none";
-            currentPatient = null; // Reset currentPatient
+            currentPatient = null;
         }
-
-        // Populate Registered Table
-        async function populateRegisteredTable(tableId, addresses, userType) {
-            const tableBody = document.getElementById(tableId).querySelector("tbody");
-            tableBody.innerHTML = "";
     
-            if (addresses.length === 0) {
-                const emptyRow = `<tr><td colspan="6">No entries found.</td></tr>`;
-                tableBody.innerHTML = emptyRow;
-                return;
-            }
-    
-            addresses.forEach(async (address, index) => {
-                try {
-                    let userDetails;
-                    let remarks = "";
-
-                    if (userType === "patient") {
-                        userDetails = await contractInstance.methods.get_patient(address).call();
-                        remarks = await contractInstance.methods.patientRemarks(address).call();
-                    } 
-    
-                    const row = `<tr>
-                        <td>${index + 1}</td>
-                        <td>${userDetails[0]}</td>
-                        <td>${userDetails[1]}</td>
-                        <td>${address}</td>
-                        <td>
-                            <input type="text" id="remarks_${address}" class="form-control" placeholder="Enter remarks" />
-                        </td>
-                         <td>
-                            <button class="btn btn-primary" onclick="saveRemarks('${address}')">Save</button>
-                            <button class="btn btn-secondary" onclick="viewRemarks('${address}')">View</button>
-                        </td>
-                    </tr>`;
-                    tableBody.innerHTML += row;
-                } catch (error) {
-                    console.error(`Error fetching ${userType} data for address ${address}:`, error);
-                }
-            });
-        }
-
-        async function saveRemarks(address) {
-            const remarks = document.getElementById(`remarks_${address}`).value;
-            if (remarks === "") {
-                alert("Remarks cannot be empty!");
-                return;
-            }
-
-            try {
-                const accounts = await web3.eth.getAccounts();
-                await contractInstance.methods.saveRemarks(address, remarks).send({ from: accounts[0] });
-                console.log(`Remarks saved for ${address}: ${remarks}`);
-                alert("Remarks saved successfully.");
-            } catch (error) {
-                console.error("Error saving remarks:", error);
-                alert("Failed to save remarks.");
-            }
-        }
-
-        async function viewRemarks(address) {
-            try {
-                const remarks = await contractInstance.methods.patientRemarks(address).call();
-                alert(`Remarks for ${address}: ${remarks || "No remarks available."}`);
-            } catch (error) {
-                console.error("Error viewing remarks:", error);
-                alert("Failed to fetch remarks.");
-            }
-        }
-
-        // Log the nurse's actions (saving/viewing remarks)
-        async function logNurseAction(action) {
-            try {
-                const logsTable = document.getElementById('nurseLogsTable').getElementsByTagName('tbody')[0];
-                const newRow = logsTable.insertRow(0);
-                const currentTime = new Date().toLocaleString();
-                newRow.innerHTML = `
-                    <td>${currentTime}</td>
-                    <td>${action}</td>
-                `;
-            } catch (error) {
-                console.error("Error logging action:", error);
-                alert("Failed to log action.");
-            }
-        }
-
-        // Initialize the page when the script loads
         initializePage();
     </script>
 </body>

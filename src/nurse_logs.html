@@ -240,6 +240,25 @@
                     });
                 }
 
+                // Fetch Nurse Remark logs
+                const remarkLogs = await contractInstance.getPastEvents("RemarkAction", {
+                    filter: { nurse: publicKey },
+                    fromBlock: 0,
+                    toBlock: "latest",
+                });
+
+                for (const log of remarkLogs) {
+                    const patientAddress = log.returnValues.patient;
+                    const patientDetails = await contractInstance.methods.get_patient(patientAddress).call();
+
+                    logs.push({
+                        eventType: "Remark",
+                        description: `Remark created for patient ${patientDetails[0]}: "${log.returnValues.remarks}"`,
+                        timestamp: Number(BigInt(log.returnValues.timestamp)), // Convert BigInt to Number
+                        action: "Created",
+                    });
+                }
+
                 // Sort logs by timestamp (descending)
                 logs.sort((a, b) => b.timestamp - a.timestamp);
 
@@ -271,7 +290,7 @@
                 console.error("Error loading logs:", error);
             }
         }
-
+        
         initializePage(); // Initialize the page on load
 
     </script>
