@@ -181,7 +181,4 @@ npm install bootstrap
 
 ## License
 
-This project is licensed under the MIT License.
-```
-
-Copy this into a file named `README.md`, replacing placeholders like `<your-username>` and `<repository-name>` as appropriate for your GitHub repository.
+This project is for educational and research purposes.
